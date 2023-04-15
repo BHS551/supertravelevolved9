@@ -1,3 +1,5 @@
+import openai from "../adapters/openia-adapter";
+
 const generateText = async prompt => {
   const response = await openai.createCompletion({
     model: "text-davinci-003",
