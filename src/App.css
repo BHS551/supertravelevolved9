@@ -24,8 +24,17 @@
   color: white;
 }
 
+.search-container {
+  
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .App-content {
-  background-color: #282c34;
+  background: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -40,6 +49,11 @@
 }
 
 .search-form {
+  background-image:  url('assets/images/form-background.jpg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 100vw;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -52,6 +66,12 @@
   width:35rem;
   height: 2.5rem;
   margin: 1rem 0;
+}
+
+.search-response {
+  width: 60%;
+  margin: 1rem 0;
+  background: rgba(40, 44, 52, 0.5);
 }
 
 .btn,
@@ -83,32 +103,53 @@ input[type="submit"]:hover{
 
 .btn-white{
   border:solid 2px #fff;
-  background: transparent;
-  color: #fff !important;
-}
-
-.btn-white:hover{
-  border:solid 2px #fff;
   background: #fff;
   color: #1f1f1f !important;
 }
 
-.image-list {
-  max-width: fit-content;
+.btn-white:hover{
+  border:solid 2px #fff;
+  background: transparent;
+  color: #fff !important;
+}
+
+.image-list-section {
+  background-color: #282c34;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-list {
+  width: 80rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-evenly;
 }
 
 .image-container img {
-  width: 10rem;
-  height: 10rem;
+  flex-basis: calc(33.33% - 20px); /* 3 items per row, with 10px gap between items */
+  margin: 0;
+  object-fit: cover;
+  max-width: 100%;
+  height: 200px; /* Set desired height for the images */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+@media (max-width: 768px) {
+  /* Responsive styles for screens with max width of 768px */
+  .image-container img {
+    flex-basis: calc(50% - 10px); /* 2 items per row on smaller screens */
   }
-  to {
-    transform: rotate(360deg);
+}
+
+@media (max-width: 480px) {
+  /* Responsive styles for screens with max width of 480px */
+  .image-container img {
+    flex-basis: 100%; /* 1 item per row on smallest screens */
   }
 }
