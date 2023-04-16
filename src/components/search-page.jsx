@@ -9,11 +9,22 @@ export const SearchPage = () => {
   const [inputActivities, setInputActivities] = useState("");
   const [inputRareness, setInputRareness] = useState("");
   const [generatedResponseData, setGeneratedResponseData] = useState([]);
+  const [generatedItineraryData, setGeneratedItineraryData] = useState([]);
   const [loadingStatus, setLoadingStatus] = useState(false);
+  const [loadingItinerary, setLoadingItinerary] = useState(false);
 
   useEffect(() => {
-    setLoadingStatus(false);
+    if (generatedResponseData.length !== 0) {
+      setLoadingStatus(false);
+      handleItineraryGeneration();
+    }
   }, [generatedResponseData]);
+  
+  useEffect(() => {
+    if (generatedItineraryData.length !== 0) {
+      setLoadingItinerary(false);
+    }
+  }, [generatedItineraryData]);
 
   const handleInputCountryVoice = (text) => {
     setInputCountry(text);
@@ -35,13 +46,19 @@ export const SearchPage = () => {
     setInputRareness(e.target.value);
   };
 
+  const handleItineraryGeneration = async () => {
+    setLoadingItinerary(true);
+    let generatedItineraryData = await crossFrunctionalitiesService.generateSuggestionWithImages(generatedResponseData, "itinerary");
+    setGeneratedItineraryData(generatedItineraryData);
+  }
+
   const handleButtonClick = async () => {
     setLoadingStatus(true);
     let generatedResponse = await crossFrunctionalitiesService.generateSuggestionWithImages({
         country: inputCountry,
         activities: inputActivities,
         rareness: inputRareness
-    });
+    }, "response");
     setGeneratedResponseData(generatedResponse);
   };
 
@@ -65,6 +82,9 @@ export const SearchPage = () => {
             </span>
         </div>
         <SearchResponseList items={generatedResponseData} />
+        ========================== Itinerary =============================
+        <LoadingSpinner isLoading={loadingItinerary} />
+        <SearchResponseList items={generatedItineraryData} />
     </div>
   );
 };

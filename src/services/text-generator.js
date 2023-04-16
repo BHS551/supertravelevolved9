@@ -6,23 +6,26 @@ const generateText = async prompt => {
     prompt,
     n: 1,
     max_tokens: 3000,
-    temperature: 0.6,
+    temperature: 0.7,
   });
   return response.data.choices[0].text;
 }
 
 const parseTextListToJson = text => {
   let responseItems = text.split(/[\r\n]+/);
-  responseItems = responseItems.filter(resItem => resItem.includes('.') && resItem.includes(':'));
+  responseItems = responseItems.filter(resItem => resItem.includes('.') || resItem.includes(':'));
   const mappedList = [];
   responseItems.forEach(resItem => {
     const regex = /\d+\./;
     resItem = resItem.replace(regex, '');
-    const splitedItem = resItem.split(":");
+    const index = resItem.indexOf(":");
+    const place = resItem.slice(0, index);
+    const description = resItem.slice(index + 1);
+
 
     const resObject = {
-      place: splitedItem[0],
-      description: splitedItem[1]
+      place,
+      description
     }
     mappedList.push(resObject);
   });
