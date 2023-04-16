@@ -27,8 +27,19 @@ const generateSuggestionWithImages = async generationParametters => {
 }
 
 const generateTextPrompt = (generationParametters) => {
-    const { country, activities, preferredLocations } = generationParametters;
-    return `Suggest three places to visit in ${country} based on these ${activities} and describe the places using cities or specific businesses. Make it organized so it is easy to read
+    const { country, activities, rareness } = generationParametters;
+    return `Suggest multiple ${rareness} options of places to visit in ${country} based on these ${activities} and describe the places widely using cities or specific businesses. Make it organized so it is easy to read. make sure to mention at least 10 characteristics of each place. create an itenirary with that data
+    Country: ${country}
+    Activities: ${activities}`
+}
+
+export default { generateSuggestionWithImages }
+
+
+
+
+/**
+ *  return `Suggest three ${rareness} places to visit in ${country} based on these ${activities} and describe the places using cities or specific businesses. Make it organized so it is easy to read.
 
     Country: Colombia
     Places: Guatape, Caño Cristales, Desierto de la Tatacoa, Tayrona National Park, Cartagena, San Andres Island
@@ -65,6 +76,4 @@ const generateTextPrompt = (generationParametters) => {
     Country: ${country}
     Places: 
     Activities: ${activities}`
-}
-
-export default { generateSuggestionWithImages }
+ */

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import crossFrunctionalitiesService from "../services/cross-frunctionalities";
 import SearchResponseList from "./search-response-list";
 import LoadingSpinner from "./spinner";
@@ -7,7 +7,7 @@ import Dictaphone from "./dictaphone";
 export const SearchPage = () => {
   const [inputCountry, setInputCountry] = useState("");
   const [inputActivities, setInputActivities] = useState("");
-  const [inputPreferredLocations, setInputPreferredLocations] = useState("");
+  const [inputRareness, setInputRareness] = useState("");
   const [generatedResponseData, setGeneratedResponseData] = useState([]);
   const [loadingStatus, setLoadingStatus] = useState(false);
 
@@ -31,15 +31,16 @@ export const SearchPage = () => {
     setInputActivities(e.target.value);
   };
 
-  const handleInputPreferredLocationsChange = (e) => {
-    setInputPreferredLocations(e.target.value);
+  const handleInputRarenessChange = (e) => {
+    setInputRareness(e.target.value);
   };
 
   const handleButtonClick = async () => {
     setLoadingStatus(true);
     let generatedResponse = await crossFrunctionalitiesService.generateSuggestionWithImages({
         country: inputCountry,
-        activities: inputActivities
+        activities: inputActivities,
+        rareness: inputRareness
     });
     setGeneratedResponseData(generatedResponse);
   };
@@ -56,7 +57,7 @@ export const SearchPage = () => {
               <Dictaphone id='activity-recording' handler = {handleInputActivitiesVoice}/>
             </span>
             <span>
-            <input className="search-input" type="text" name="location-preferences" placeholder='Location preferences' value={inputPreferredLocations} onChange={handleInputPreferredLocationsChange} />
+            <input className="search-input" type="text" name="rareness" placeholder='Rareness' value={inputRareness} onChange={handleInputRarenessChange} />
             </span>
             <LoadingSpinner isLoading={loadingStatus} />
             <span>
