@@ -15,8 +15,6 @@ const Dictaphone = (props) => {
     props.handler(transcript);
   }
 
-  
-
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
   }
