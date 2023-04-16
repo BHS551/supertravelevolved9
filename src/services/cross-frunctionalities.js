@@ -1,8 +1,45 @@
+import imageGenerator from "./image-generator";
 import textGenerator from "./text-generator";
 
 const generateSuggestionWithImages = async generationParametters => {
-    const { country, activities, preferredLocations } = generationParametters;
-    return await textGenerator.generateText(`Suggest three places to visit in ${country} based on these ${activities} and describe the places using cities or specific businesses. Make it organized so it is easy to read
+    const textRawResponse = await textGenerator.generateText(generateTextPrompt(generationParametters));
+    const textResponseItems = textGenerator.parseTextListToJson(textRawResponse);
+    const imageResponseRequests = textResponseItems.map(tResItem => {
+        const { place, description } = tResItem;
+        return new Promise (async (resolve) => {
+            const placeImageUrl = await imageGenerator.generateImage(place);
+            const descriptionImageUrl = await imageGenerator.generateImage(description);
+            resolve({ place, placeImageUrl, descriptionImageUrl });
+        });
+    });
+    const imageResponseItems = await Promise.all(imageResponseRequests);
+    const response = textResponseItems.map( tResItem => {
+        const { place, description } = tResItem;
+        const { placeImageUrl, descriptionImageUrl } = imageResponseItems.find(iResItem => iResItem.place === place);
+        return {
+            place,
+            description,
+            placeImageUrl,
+            descriptionImageUrl
+        }
+    });
+    return response;
+}
+
+const generateTextPrompt = (generationParametters) => {
+    const { country, activities, rareness } = generationParametters;
+    return `Suggest multiple ${rareness} options of places to visit in ${country} based on these ${activities} and describe the places widely using cities or specific businesses. Make it organized so it is easy to read. make sure to mention at least 10 characteristics of each place. create an itenirary with that data
+    Country: ${country}
+    Activities: ${activities}`
+}
+
+export default { generateSuggestionWithImages }
+
+
+
+
+/**
+ *  return `Suggest three ${rareness} places to visit in ${country} based on these ${activities} and describe the places using cities or specific businesses. Make it organized so it is easy to read.
 
     Country: Colombia
     Places: Guatape, Caño Cristales, Desierto de la Tatacoa, Tayrona National Park, Cartagena, San Andres Island
@@ -38,7 +75,5 @@ const generateSuggestionWithImages = async generationParametters => {
     
     Country: ${country}
     Places: 
-    Activities: ${activities}`);
-}
-
-export default { generateSuggestionWithImages }
+    Activities: ${activities}`
+ */
