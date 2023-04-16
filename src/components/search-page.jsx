@@ -14,7 +14,7 @@ export const SearchPage = () => {
   const [generatedItineraryData, setGeneratedItineraryData] = useState([]);
   const [loadingStatus, setLoadingStatus] = useState(false);
   const [loadingItinerary, setLoadingItinerary] = useState(false);
-  const [inputBudget, setInputBudget] = useState(false);
+  const [inputBudget, setInputBudget] = useState(2000);
 
   useEffect(() => {
     if (generatedResponseData.length !== 0) {
