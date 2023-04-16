@@ -16,7 +16,7 @@ const LanguageSelector = ({parentHandleLanguageChange}) => {
       <select id="language-select" value={selectedLanguage} onChange={handleLanguageChange}>
         <option value="english">English</option>
         <option value="español">Español</option>
-        <option value="français">Français</option>
+        <option value="French">Français</option>
         {/* Add more language options as needed */}
       </select>
     </div>

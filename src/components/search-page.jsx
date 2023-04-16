@@ -66,9 +66,9 @@ export const SearchPage = () => {
     setGeneratedResponseData(generatedResponse);
   };
 
-  const handleTranslation = async() => {
+  const handleTranslation = async(newLanguage) => {
     setLoadingStatus(true);
-    let translatedInformation = await crossFrunctionalitiesService.translatePlaceInformation(generatedResponseData, 'spanish'); 
+    let translatedInformation = await crossFrunctionalitiesService.translatePlaceInformation(generatedResponseData, newLanguage); 
     setGeneratedResponseData(translatedInformation);
     setLoadingStatus(false);
   }
