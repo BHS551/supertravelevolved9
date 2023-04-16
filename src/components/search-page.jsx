@@ -3,6 +3,7 @@ import crossFrunctionalitiesService from "../services/cross-frunctionalities";
 import SearchResponseList from "./search-response-list";
 import LoadingSpinner from "./spinner";
 import Dictaphone from "./dictaphone";
+import BudgetSlider from "./range-selector";
 
 export const SearchPage = () => {
   const [inputCountry, setInputCountry] = useState("");
@@ -12,6 +13,7 @@ export const SearchPage = () => {
   const [generatedItineraryData, setGeneratedItineraryData] = useState([]);
   const [loadingStatus, setLoadingStatus] = useState(false);
   const [loadingItinerary, setLoadingItinerary] = useState(false);
+  const [inputBudget, setInputBudget] = useState(false);
 
   useEffect(() => {
     if (generatedResponseData.length !== 0) {
@@ -57,14 +59,22 @@ export const SearchPage = () => {
     let generatedResponse = await crossFrunctionalitiesService.generateSuggestionWithImages({
         country: inputCountry,
         activities: inputActivities,
-        rareness: inputRareness
+        rareness: inputRareness,
+        budget: inputBudget
     }, "response");
     setGeneratedResponseData(generatedResponse);
   };
 
+  const handleBudgetChange = async newBudget => {
+    setInputBudget(newBudget);
+  }
+
   return (
     <div className="search-container">
         <div className="search-form">
+          <span>
+            <h2>Super Travel Evolved</h2>
+          </span>
             <span>
               <input className="search-input" type="text" name="country" placeholder='Country' value={inputCountry} onChange={handleInputCountryChange} />
               <Dictaphone id='country-recordind' handler = {handleInputCountryVoice}/>
@@ -74,7 +84,10 @@ export const SearchPage = () => {
               <Dictaphone id='activity-recording' handler = {handleInputActivitiesVoice}/>
             </span>
             <span>
-            <input className="search-input" type="text" name="rareness" placeholder='Rareness' value={inputRareness} onChange={handleInputRarenessChange} />
+              <input className="search-input" type="text" name="rareness" placeholder='Rareness' value={inputRareness} onChange={handleInputRarenessChange} />
+            </span>
+            <span>
+              <BudgetSlider parentHandleBudgetChange={(newBudget) => {handleBudgetChange(newBudget)}} />
             </span>
             <LoadingSpinner isLoading={loadingStatus} />
             <span>
