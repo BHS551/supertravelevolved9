@@ -101,7 +101,6 @@ export const SearchPage = () => {
             <LoadingSpinner isLoading={loadingStatus} />
             <span>
                 <button disabled={loadingStatus} onClick={()=> handleButtonClick()} className="btn btn-white"> Generate </button>
-                <button disabled={loadingStatus} onClick={()=> handleTranslation()} className="btn btn-white"> Translate </button>
             </span>
         </div>
         <SearchResponseList items={generatedResponseData} />
