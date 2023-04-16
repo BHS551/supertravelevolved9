@@ -230,3 +230,13 @@ input[type="submit"]:hover{
 .budget-selector h6{
   margin: 0 0;
 }
+
+.language-selector {
+  display: flex;
+  justify-content: end;
+  gap: 1rem;
+}
+
+.language-selector label {
+  font-size: 0.5em;
+}

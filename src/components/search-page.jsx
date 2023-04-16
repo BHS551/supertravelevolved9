@@ -4,6 +4,7 @@ import SearchResponseList from "./search-response-list";
 import LoadingSpinner from "./spinner";
 import Dictaphone from "./dictaphone";
 import BudgetSlider from "./range-selector";
+import LanguageSelector from "./lenguage-selector";
 
 export const SearchPage = () => {
   const [inputCountry, setInputCountry] = useState("");
@@ -69,8 +70,12 @@ export const SearchPage = () => {
     setInputBudget(newBudget);
   }
 
+  const handleLenguageChange = async newBudget => {
+  }
+
   return (
     <div className="search-container">
+        <LanguageSelector parentHandleLanguageChange={newLanguage=>{handleLenguageChange(newLanguage)}} />
         <div className="search-form">
           <span>
             <h2>Super Travel Evolved</h2>
