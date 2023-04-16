@@ -1,8 +1,34 @@
+import imageGenerator from "./image-generator";
 import textGenerator from "./text-generator";
 
 const generateSuggestionWithImages = async generationParametters => {
+    const textRawResponse = await textGenerator.generateText(generateTextPrompt(generationParametters));
+    const textResponseItems = textGenerator.parseTextListToJson(textRawResponse);
+    const imageResponseRequests = textResponseItems.map(tResItem => {
+        const { place, description } = tResItem;
+        return new Promise (async (resolve) => {
+            const placeImageUrl = await imageGenerator.generateImage(place);
+            const descriptionImageUrl = await imageGenerator.generateImage(description);
+            resolve({ place, placeImageUrl, descriptionImageUrl });
+        });
+    });
+    const imageResponseItems = await Promise.all(imageResponseRequests);
+    const response = textResponseItems.map( tResItem => {
+        const { place, description } = tResItem;
+        const { placeImageUrl, descriptionImageUrl } = imageResponseItems.find(iResItem => iResItem.place === place);
+        return {
+            place,
+            description,
+            placeImageUrl,
+            descriptionImageUrl
+        }
+    });
+    return response;
+}
+
+const generateTextPrompt = (generationParametters) => {
     const { country, activities, preferredLocations } = generationParametters;
-    return await textGenerator.generateText(`Suggest three places to visit in ${country} based on these ${activities} and describe the places using cities or specific businesses. Make it organized so it is easy to read
+    return `Suggest three places to visit in ${country} based on these ${activities} and describe the places using cities or specific businesses. Make it organized so it is easy to read
 
     Country: Colombia
     Places: Guatape, Caño Cristales, Desierto de la Tatacoa, Tayrona National Park, Cartagena, San Andres Island
@@ -38,7 +64,7 @@ const generateSuggestionWithImages = async generationParametters => {
     
     Country: ${country}
     Places: 
-    Activities: ${activities}`);
+    Activities: ${activities}`
 }
 
 export default { generateSuggestionWithImages }

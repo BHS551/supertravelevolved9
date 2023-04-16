@@ -1,26 +1,18 @@
 import React, { useEffect, useState } from "react";
 import crossFrunctionalitiesService from "../services/cross-frunctionalities";
-import SearchResponseImage from "./search-response-image";
-
-const testImages = [
-    "https://grupoinmotion.com/wp-content/uploads/2020/12/inteligencia-artificial-770x400.jpg",
-    "https://grupoinmotion.com/wp-content/uploads/2020/12/inteligencia-artificial-770x400.jpg",
-    "https://grupoinmotion.com/wp-content/uploads/2020/12/inteligencia-artificial-770x400.jpg",
-    "https://grupoinmotion.com/wp-content/uploads/2020/12/inteligencia-artificial-770x400.jpg",
-    "https://grupoinmotion.com/wp-content/uploads/2020/12/inteligencia-artificial-770x400.jpg",
-    "https://grupoinmotion.com/wp-content/uploads/2020/12/inteligencia-artificial-770x400.jpg",
-    "https://grupoinmotion.com/wp-content/uploads/2020/12/inteligencia-artificial-770x400.jpg",
-    "https://grupoinmotion.com/wp-content/uploads/2020/12/inteligencia-artificial-770x400.jpg",
-    "https://grupoinmotion.com/wp-content/uploads/2020/12/inteligencia-artificial-770x400.jpg",
-    "https://grupoinmotion.com/wp-content/uploads/2020/12/inteligencia-artificial-770x400.jpg",
-]
+import SearchResponseList from "./search-response-list";
+import LoadingSpinner from "./spinner";
 
 export const SearchPage = () => {
   const [inputCountry, setInputCountry] = useState("");
   const [inputActivities, setInputActivities] = useState("");
   const [inputPreferredLocations, setInputPreferredLocations] = useState("");
-  const [generatedResponse, setGeneratedResponse] = useState("");
-  const [imageUrls, setGeneratedImages] = useState(testImages);
+  const [generatedResponseData, setGeneratedResponseData] = useState([]);
+  const [loadingStatus, setLoadingStatus] = useState(false);
+
+  useEffect(() => {
+    setLoadingStatus(false);
+  }, [generatedResponseData]);
 
   const handleInputCountryChange = (e) => {
     setInputCountry(e.target.value);
@@ -35,11 +27,12 @@ export const SearchPage = () => {
   };
 
   const handleButtonClick = async () => {
-    const generatedResponse = await crossFrunctionalitiesService.generateSuggestionWithImages({
+    setLoadingStatus(true);
+    let generatedResponse = await crossFrunctionalitiesService.generateSuggestionWithImages({
         country: inputCountry,
         activities: inputActivities
     });
-    setGeneratedResponse(generatedResponse);
+    setGeneratedResponseData(generatedResponse);
   };
 
   return (
@@ -54,16 +47,12 @@ export const SearchPage = () => {
             <span>
             <input className="search-input" type="text" name="location-preferences" placeholder='Location preferences' value={inputPreferredLocations} onChange={handleInputPreferredLocationsChange} />
             </span>
+            <LoadingSpinner isLoading={loadingStatus} />
             <span>
-                <button onClick={()=> handleButtonClick()} className="btn btn-white"> Generate </button>
+                <button disabled={loadingStatus} onClick={()=> handleButtonClick()} className="btn btn-white"> Generate </button>
             </span>
-            <div className="search-response">
-              <span>
-                  <p>{JSON.stringify(generatedResponse)}</p>
-              </span>
-            </div>
         </div>
-        <SearchResponseImage imageUrls={imageUrls} />
+        <SearchResponseList items={generatedResponseData} />
     </div>
   );
 };

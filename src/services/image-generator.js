@@ -1,11 +1,12 @@
+import openai from "../adapters/openia-adapter";
 
 const generateImage = async prompt => {
-    response = await openai.createImage({
+    const response = await openai.createImage({
       prompt,
       n: 1,
       size:"1024x1024"
     })
-    return response.data.data;
+    return response.data.data[0].url;
   }
 
   
