@@ -161,6 +161,25 @@ input[type="submit"]:hover{
   width: auto;
 }
 
+.dictaphone {
+  background-size: 70%;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 45px;
+  height: 45px;
+  vertical-align: middle;
+  margin-left: 5px;
+  margin-top: 4px;
+}
+
+.stop-recording {
+  background-image: url('assets/images/stop_recording.png');
+}
+
+.start-recording {
+  background-image: url('assets/images/start_recording.png');
+}
+
 @media (max-width: 768px) {
   /* Responsive styles for screens with max width of 768px */
   .item-images img {
