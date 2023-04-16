@@ -28,8 +28,7 @@ const generateSuggestionWithImages = async (generationParametters, type) => {
 }
 
 const generateTextPrompt = (generationParametters) => {
-    const { country = 'colombia', activities = 'hiking', rareness = 'uncommon' } = generationParametters;
-    const budget = 3000;
+    const { country = 'colombia', activities = 'hiking', rareness = 'uncommon', budget = 3000 } = generationParametters;
     return `Suggest three ${rareness} places to visit in ${country} based on ${activities} among other similars, describe the places using cities or specific businesses. Make it organized so it is easy to read. Take in consideration that my budget is ${budget} dollars.
 
     Country: ${country}
