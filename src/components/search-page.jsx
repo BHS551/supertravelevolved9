@@ -3,6 +3,7 @@ import crossFrunctionalitiesService from "../services/cross-frunctionalities";
 import SearchResponseList from "./search-response-list";
 import LoadingSpinner from "./spinner";
 import Dictaphone from "./dictaphone";
+import { wait } from "@testing-library/user-event/dist/utils";
 
 export const SearchPage = () => {
   const [inputCountry, setInputCountry] = useState("");
@@ -62,6 +63,13 @@ export const SearchPage = () => {
     setGeneratedResponseData(generatedResponse);
   };
 
+  const handleTranslation = async() => {
+    setLoadingStatus(true);
+    let translatedInformation = await crossFrunctionalitiesService.translatePlaceInformation(generatedResponseData, 'spanish'); 
+    setGeneratedResponseData(translatedInformation);
+    setLoadingStatus(false);
+  }
+
   return (
     <div className="search-container">
         <div className="search-form">
@@ -79,6 +87,7 @@ export const SearchPage = () => {
             <LoadingSpinner isLoading={loadingStatus} />
             <span>
                 <button disabled={loadingStatus} onClick={()=> handleButtonClick()} className="btn btn-white"> Generate </button>
+                <button disabled={loadingStatus} onClick={()=> handleTranslation()} className="btn btn-white"> Translate </button>
             </span>
         </div>
         <SearchResponseList items={generatedResponseData} />

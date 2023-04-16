@@ -57,7 +57,22 @@ const generateItineraryPrompt = placesInformation => {
     `
 }
 
-export default { generateSuggestionWithImages }
+const translatePlaceInformation = async (placeInformation, language) => {
+    let places = placeInformation.map(place => {return {VAL1: place.place, VAL2: place.description}});
+    let promt = `translate this array ${JSON.stringify(places)} to ${language} and return it with the same structure`;
+    const textRawResponse = await textGenerator.generateText(promt);
+    const newPlacesInfomation = JSON.parse(textRawResponse).map((item, index) => {
+        return {
+            place: item.VAL1,
+            description: item.VAL2,
+            placeImageUrl: placeInformation[index].placeImageUrl,
+            descriptionImageUrl: placeInformation[index].descriptionImageUrl
+        }
+    });
+    return newPlacesInfomation;
+}
+
+export default { generateSuggestionWithImages, translatePlaceInformation}
 
 
 /**
