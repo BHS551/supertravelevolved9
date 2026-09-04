@@ -1,70 +1,78 @@
-# Getting Started with Create React App
+# supertravelevolved9
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A voice-driven travel advisor: speak a destination request, and the app
+transcribes it in the browser, asks a language model for recommendations, and
+illustrates each suggestion with a generated image.
 
-## Available Scripts
+React, built in early 2023 against OpenAI's completion and image APIs.
 
-In the project directory, you can run:
+## How it works
 
-### `npm start`
+```
+microphone
+   │  Web Speech API (react-speech-recognition)
+   ▼
+transcript ──► prompt assembled from the transcript,
+   │           language selection and budget range
+   ▼
+generateText  ──► text completion ──► free-form prose
+   │
+   ▼
+parseTextListToJson  ──► [ { place, description }, … ]
+   │
+   ▼
+for each place: generateImage ──► image URL
+   │
+   ▼
+results list with pictures
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Key technical decisions
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+**Speech recognition runs in the browser.** `react-speech-recognition` wraps the
+Web Speech API, so no audio is uploaded and there is no transcription bill — the
+transcript is handed over only when the user stops recording. The component
+degrades explicitly when the browser has no support rather than failing
+silently.
 
-### `npm test`
+**The model's prose is parsed into structure.** The completion returns a
+numbered list as text, and `parseTextListToJson` splits on line breaks, drops
+lines without a `.` or `:`, strips the numbering, and splits each line into
+`place` and `description`. This predates reliable structured output — coercing
+free-form text into a schema was the way to render it as a list. It is also the
+brittlest part of the app, and worth reading as a snapshot of what pre-JSON-mode
+LLM integration looked like.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+**The OpenAI client is isolated in an adapter.** `adapters/openia-adapter.js`
+constructs the configured client once, and `text-generator` and
+`image-generator` are the only modules that import it.
 
-### `npm run build`
+**The provider is separated from the feature.** `services/` holds the two
+generation calls, `utils/` the prompt assembly, `components/` the UI — so a
+change of model touches one file.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Running it
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+npm install
+npm start          # http://localhost:3000
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Requires an OpenAI API key. Create `.env.local`:
 
-### `npm run eject`
+```
+REACT_APP_OPENAI_API_KEY=...
+REACT_APP_OPENAI_ORGANIZATION_ID=...
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Requires a browser with Web Speech API support (Chrome or Edge).
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+> **Security note.** A `REACT_APP_`-prefixed variable is inlined into the
+> JavaScript bundle at build time, so any key configured this way is served to
+> every visitor and must be treated as public. This app calls OpenAI directly
+> from the browser, which was common at the time but is not safe for a deployed
+> site — the call belongs behind a backend that holds the key. The repository's
+> committed `.env` files should be removed and the keys in them rotated.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+> **Note.** This project uses the deprecated `text-davinci-003` completion
+> endpoint and the v3 OpenAI client; both need updating to run today.
